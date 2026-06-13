@@ -1,0 +1,16 @@
+# Run with `dart run ffigen --config ffigen.yaml`.
+name: FlutterMindLocalBindings
+description: |
+  Bindings for `src/flutter_mind_local.h`.
+
+  Regenerate bindings with `dart run ffigen --config ffigen.yaml`.
+output: 'lib/flutter_mind_local_bindings_generated.dart'
+headers:
+  entry-points:
+    - 'src/flutter_mind_local.h'
+  include-directives:
+    - 'src/flutter_mind_local.h'
+ffi-native:
+comments:
+  style: any
+  length: full
