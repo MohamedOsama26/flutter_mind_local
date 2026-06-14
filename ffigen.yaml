@@ -14,3 +14,9 @@ ffi-native:
 comments:
   style: any
   length: full
+functions:
+  exclude:
+    - '^flutter_mind_local_init$'
+structs:
+  exclude:
+    - '^FlutterMindLocalConfig$'
