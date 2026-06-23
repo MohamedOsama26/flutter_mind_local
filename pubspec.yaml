@@ -31,5 +31,6 @@ flutter:
     platforms:
       android:
         ffiPlugin: true
-      ios:
-        ffiPlugin: true
+      # iOS build files exist (package.swift) but are untested on a real
+      # device/simulator — left out of platform support until verified.
+      # See package.swift if you want to test and report back.
