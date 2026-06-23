@@ -414,25 +414,27 @@ class LocalEngine implements AiEngine {
       config.onEvent?.call(ModelLoadStarted());
       final loadWatch = Stopwatch()..start();
 
-      // load model in background — does NOT block the UI thread
-      final ok = await Isolate.run(
-        () => _runInit(
-          _LocalInitArgs(
-            modelPath: config.modelPath,
-            systemPrompt: config.systemPrompt?.build(userMessage: '') ?? '',
-            stopSequences: (config.stopSequences ?? []).join('\x1F'),
-            temperature: config.temperature ?? 0.7,
-            maxTokens: config.maxOutputTokens ?? 512,
-            contextSize: config.contextSize ?? 2048,
-            repeatPenalty: config.repeatPenalty ?? 1.1,
-            topP: config.topP ?? 0.9,
-            topK: config.topK ?? 40,
-            seed: config.seed ?? -1,
-            threads: config.threads ?? 4,
-            modelType: config.modelType.index,
-          ),
-        ),
+      // build the sendable args BEFORE entering the isolate closure — if we
+      // reference `config` directly inside the closure, Isolate.run captures
+      // the whole LocalConfig (including the unsendable `onEvent` closure,
+      // which holds a reference back to this LocalEngine and its Completers)
+      final initArgs = _LocalInitArgs(
+        modelPath: config.modelPath,
+        systemPrompt: config.systemPrompt?.build(userMessage: '') ?? '',
+        stopSequences: (config.stopSequences ?? []).join('\x1F'),
+        temperature: config.temperature ?? 0.7,
+        maxTokens: config.maxOutputTokens ?? 512,
+        contextSize: config.contextSize ?? 2048,
+        repeatPenalty: config.repeatPenalty ?? 1.1,
+        topP: config.topP ?? 0.9,
+        topK: config.topK ?? 40,
+        seed: config.seed ?? -1,
+        threads: config.threads ?? 4,
+        modelType: config.modelType.index,
       );
+
+      // load model in background — does NOT block the UI thread
+      final ok = await Isolate.run(() => _runInit(initArgs));
 
       if (!ok) {
         throw EngineException(
