@@ -204,9 +204,9 @@ per screen or isolate it behind a queue.
 
 | Platform | Build system | Status |
 |----------|-------------|--------|
-| Android | CMake + FetchContent | ✅ |
-| iOS | Swift Package Manager | ✅ |
-| macOS | Swift Package Manager | ✅ |
+| Android | CMake + FetchContent | ✅ Tested on a real device |
+| iOS | Swift Package Manager | 🚧 Build files exist, untested — not yet enabled in `pubspec.yaml` |
+| macOS | Swift Package Manager | 🚧 Build files exist, untested — not yet enabled in `pubspec.yaml` |
 | Linux | Not yet supported | — |
 | Windows | Not yet supported | — |
 
