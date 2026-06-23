@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Test model files — too large for git, download separately (see README)
+*.gguf
