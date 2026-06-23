@@ -34,6 +34,8 @@ final class ModelLoadStarted extends LocalEngineEvent {}
 final class ModelReady extends LocalEngineEvent {
   /// How long the model took to load.
   final Duration loadTime;
+
+  /// Creates a [ModelReady] event.
   ModelReady({required this.loadTime});
 }
 
@@ -44,6 +46,8 @@ final class ModelReady extends LocalEngineEvent {
 final class ModelFailed extends LocalEngineEvent {
   /// The error that caused the load to fail.
   final String error;
+
+  /// Creates a [ModelFailed] event.
   ModelFailed({required this.error});
 }
 
@@ -54,6 +58,8 @@ final class ModelFailed extends LocalEngineEvent {
 final class InferenceStarted extends LocalEngineEvent {
   /// The user message that triggered this inference.
   final String userMessage;
+
+  /// Creates an [InferenceStarted] event.
   InferenceStarted({required this.userMessage});
 }
 
@@ -67,6 +73,8 @@ final class InferenceCompleted extends LocalEngineEvent {
 
   /// How long the model took to generate the response.
   final Duration inferenceTime;
+
+  /// Creates an [InferenceCompleted] event.
   InferenceCompleted({required this.response, required this.inferenceTime});
 }
 
@@ -76,6 +84,8 @@ final class InferenceCompleted extends LocalEngineEvent {
 final class InferenceFailed extends LocalEngineEvent {
   /// The error that caused inference to fail.
   final String error;
+
+  /// Creates an [InferenceFailed] event.
   InferenceFailed({required this.error});
 }
 
