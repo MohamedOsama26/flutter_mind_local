@@ -97,9 +97,10 @@ packages:
   flutter_mind:
     dependency: transitive
     description:
-      path: "../../flutter_mind"
-      relative: true
-    source: path
+      name: flutter_mind
+      sha256: "83f277a810a635c335235520598b50b3617c351cfd861cb5dd74e47cc10957fe"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.2.1"
   flutter_mind_local:
     dependency: "direct main"
