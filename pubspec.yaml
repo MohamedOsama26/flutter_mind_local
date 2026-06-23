@@ -16,8 +16,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_mind:
-    path: ../flutter_mind
+  flutter_mind: ^0.3.0
   ffi: ^2.1.4
   meta: ^1.16.0
 
