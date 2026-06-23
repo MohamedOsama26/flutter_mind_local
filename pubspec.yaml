@@ -1,6 +1,8 @@
 name: flutter_mind_local
 description: "On-device AI inference for Flutter using llama.cpp via FFI. Local engine companion to flutter_mind."
 version: 0.1.0
+repository: https://github.com/MohamedOsama26/flutter_mind_local
+homepage: https://github.com/MohamedOsama26/flutter_mind_local
 
 topics:
   - ai
