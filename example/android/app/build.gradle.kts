@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.bedaya.flutter_mind_local"
+    namespace = "dev.bedaya.flutter_mind_local_example"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "dev.bedaya.flutter_mind_local"
+        applicationId = "dev.bedaya.flutter_mind_local_example"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
