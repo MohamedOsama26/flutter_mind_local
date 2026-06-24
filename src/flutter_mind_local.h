@@ -94,6 +94,37 @@ extern "C"
     const char *flutter_mind_local_prompt(const char *prompt);
 
     /**
+     * Tokenises the prompt and primes generation state for streaming.
+     * Call once, then call flutter_mind_local_prompt_next() in a loop until
+     * it returns NULL.
+     *
+     * Do NOT call flutter_mind_local_prompt() while a prompt_next() loop is
+     * in progress — both share the same generation state (g_sampler,
+     * g_response) and will corrupt each other's output.
+     *
+     * @param prompt  The full conversation string (history + user message).
+     * @return        0 on success, non-zero on failure (tokenisation error).
+     */
+    int flutter_mind_local_prompt_start(const char *prompt);
+
+    /**
+     * Generates and returns exactly one token's text. Call repeatedly after
+     * flutter_mind_local_prompt_start() until it returns NULL.
+     *
+     * KNOWN LIMITATION: a stop sequence spanning more than one token can leak
+     * a partial fragment before the match completes, since each token is
+     * returned as soon as it's generated. flutter_mind_local_prompt() doesn't
+     * have this issue because it only ever returns the fully-trimmed string.
+     *
+     * The returned pointer is valid until the next prompt_next()/prompt()
+     * call or flutter_mind_local_cleanup(). Do NOT free it from Dart.
+     *
+     * @return  Text for one token, or NULL when generation is done (EOG
+     *          token, stop sequence matched, or max_tokens reached).
+     */
+    const char *flutter_mind_local_prompt_next();
+
+    /**
      * Frees the model, context, and sampler from memory.
      *
      * Call once when the engine is disposed. After this, flutter_mind_local_init_params()
