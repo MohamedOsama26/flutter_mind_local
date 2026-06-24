@@ -52,6 +52,12 @@ typedef _InitParamsDart =
 typedef _PromptC = Pointer<Utf8> Function(Pointer<Utf8> prompt);
 typedef _PromptDart = Pointer<Utf8> Function(Pointer<Utf8> prompt);
 
+typedef _PromptStartC = Int32 Function(Pointer<Utf8> prompt);
+typedef _PromptStartDart = int Function(Pointer<Utf8> prompt);
+
+typedef _PromptNextC = Pointer<Utf8> Function();
+typedef _PromptNextDart = Pointer<Utf8> Function();
+
 typedef _CleanupC = Void Function();
 typedef _CleanupDart = void Function();
 
@@ -156,6 +162,56 @@ String _runPrompt(String prompt) {
   final text = result == nullptr ? '' : result.toDartString().trim();
   calloc.free(ptr);
   return text;
+}
+
+/// Sent to [_streamPromptEntry] — bundles the prompt and the port it reports
+/// back through. [Isolate.spawn] takes exactly one argument, so this wraps both.
+class _StreamArgs {
+  final SendPort sendPort;
+  final String prompt;
+  const _StreamArgs({required this.sendPort, required this.prompt});
+}
+
+/// Sent back over the port when native setup or generation fails.
+/// Distinct from a `String` token and from the `null` "done" sentinel.
+class _StreamError {
+  final String message;
+  const _StreamError(this.message);
+}
+
+/// Isolate entry point for streaming — unlike [_runPrompt]/[Isolate.run],
+/// this isolate stays alive for the whole generation and sends each token
+/// over [SendPort] as soon as it's produced, instead of returning one final
+/// value. Sends `null` as the "done" sentinel, or a [_StreamError] on failure.
+void _streamPromptEntry(_StreamArgs args) {
+  final lib = _openLib();
+  final start = lib.lookupFunction<_PromptStartC, _PromptStartDart>(
+    'flutter_mind_local_prompt_start',
+  );
+  final next = lib.lookupFunction<_PromptNextC, _PromptNextDart>(
+    'flutter_mind_local_prompt_next',
+  );
+
+  final promptPtr = args.prompt.toNativeUtf8();
+  final startResult = start(promptPtr);
+  calloc.free(promptPtr);
+
+  if (startResult != 0) {
+    args.sendPort.send(const _StreamError('LocalEngine: failed to start generation.'));
+    return;
+  }
+
+  while (true) {
+    // prompt_next()'s returned pointer is native-owned (valid until the next
+    // call) — read it immediately, do NOT calloc.free it, that's only for
+    // buffers *we* allocated via toNativeUtf8().
+    final tokenPtr = next();
+    if (tokenPtr == nullptr) {
+      args.sendPort.send(null); // done
+      return;
+    }
+    args.sendPort.send(tokenPtr.toDartString());
+  }
 }
 
 // Engine
@@ -276,15 +332,61 @@ class LocalEngine implements AiEngine {
     List<ChatMessage>? history,
     int maxHistoryMessages = 20,
   }) async* {
-    // local models don't support true streaming yet
-    // yield full response at once
-    final response = await send(
+    final resolved = _mergeConfig(config);
+    await _ensureInitialized(resolved);
+
+    // same concurrency guard as send() — both share the native engine's
+    // global generation state, so only one can run at a time.
+    if (_inferenceCompleter != null) {
+      await _inferenceCompleter!.future;
+    }
+    _inferenceCompleter = Completer<void>();
+
+    resolved.onEvent?.call(InferenceStarted(userMessage: userMessage));
+    final inferenceWatch = Stopwatch()..start();
+
+    final prompt = _buildPrompt(
       userMessage: userMessage,
-      config: config,
       history: history,
       maxHistoryMessages: maxHistoryMessages,
     );
-    yield response.text;
+
+    final receivePort = ReceivePort();
+    final buffer = StringBuffer();
+
+    try {
+      await Isolate.spawn(
+        _streamPromptEntry,
+        _StreamArgs(sendPort: receivePort.sendPort, prompt: prompt),
+      );
+
+      await for (final message in receivePort) {
+        if (message == null) break; // done sentinel
+        if (message is _StreamError) {
+          throw EngineException(message.message);
+        }
+        final chunk = message as String;
+        buffer.write(chunk);
+        yield chunk;
+      }
+
+      inferenceWatch.stop();
+      resolved.onEvent?.call(
+        InferenceCompleted(
+          response: buffer.toString(),
+          inferenceTime: inferenceWatch.elapsed,
+        ),
+      );
+      _inferenceCompleter!.complete();
+      _inferenceCompleter = null;
+    } catch (e) {
+      resolved.onEvent?.call(InferenceFailed(error: e.toString()));
+      _inferenceCompleter!.completeError(e);
+      _inferenceCompleter = null;
+      rethrow;
+    } finally {
+      receivePort.close();
+    }
   }
 
   @override
