@@ -1,10 +1,18 @@
 # flutter_mind_local
 
+<p align="center">
+  <img src="flutter_mind_local_icon2.svg" width="120" alt="flutter_mind_local logo" />
+</p>
+
 On-device LLM inference for Flutter — powered by [llama.cpp](https://github.com/ggerganov/llama.cpp).  
 No API key. No internet. No server. Runs entirely on the user's device.
 
 A companion package to [flutter_mind](https://pub.dev/packages/flutter_mind) that implements
 `LocalEngine`, a drop-in `AiEngine` for running quantized `.gguf` models locally.
+
+`LocalEngine` plugs directly into `flutter_mind`'s `FlutterMindClient` — the same client
+you'd use with `GeminiEngine` or any other engine. No separate API to learn: swap engines,
+keep the same `send`/`stream`/`countTokens` calls.
 
 ---
 
@@ -54,6 +62,37 @@ absolute path to `LocalConfig.modelPath`.
 
 ## Quick start
 
+### With `FlutterMindClient` (recommended)
+
+The same client used for every `flutter_mind` engine — input validation, `beforeSend`
+hooks, and the singleton pattern all come for free, and swapping to a cloud engine
+later is a one-line change.
+
+```dart
+import 'package:flutter_mind/flutter_mind.dart';
+import 'package:flutter_mind_local/flutter_mind_local.dart';
+
+final ai = FlutterMindClient(
+  engine: LocalEngine(
+    config: LocalConfig(
+      modelPath: '/data/user/0/com.example.app/files/qwen.gguf',
+    ),
+  ),
+);
+
+// The model loads on the first send() call — no explicit init needed.
+final response = await ai.send(userMessage: 'Hello! Who are you?');
+print(response.text);
+
+// Streaming, word by word
+ai.stream(userMessage: 'Tell me a story').listen((chunk) => print(chunk));
+```
+
+### Direct `LocalEngine` usage
+
+Skip `FlutterMindClient` if you don't need validation/hooks and want the engine's
+`AiEngine` API directly:
+
 ```dart
 import 'package:flutter_mind_local/flutter_mind_local.dart';
 
@@ -63,7 +102,6 @@ final engine = LocalEngine(
   ),
 );
 
-// The model loads on the first send() call — no explicit init needed.
 final response = await engine.send(userMessage: 'Hello! Who are you?');
 print(response.text);
 
@@ -153,6 +191,30 @@ LocalConfig(
 | `InferenceFailed` | Generation failed, includes `error` |
 | `ContextCleared` | KV-cache was reset due to context overflow |
 | `ModelDisposed` | `dispose()` was called, model unloaded from RAM |
+
+---
+
+## Streaming
+
+`stream()` generates real token-by-token output — each chunk is sent to your listener
+as soon as the model produces it, not all at once after the full response finishes:
+
+```dart
+engine.stream(userMessage: 'Tell me a story').listen((chunk) {
+  setState(() => displayText += chunk);
+});
+```
+
+This runs on a dedicated long-lived background isolate (separate from `send()`'s
+one-shot isolate), so the UI thread is never blocked while tokens stream in. Only
+one `send()` or `stream()` call can run at a time per `LocalEngine` instance — a
+second call waits for the first to finish before starting.
+
+**Known limitation:** if a stop sequence spans more than one token (e.g. a chat
+template's end-of-turn marker gets tokenized as two pieces), a partial fragment of
+it can appear in the stream before the full match is detected and generation stops.
+This doesn't affect `send()`, which only ever returns the fully-trimmed final string.
+In practice this is rare — most chat templates' stop strings tokenize as a single token.
 
 ---
 
