@@ -1,5 +1,5 @@
 name: flutter_mind_local
-description: "On-device AI inference for Flutter using llama.cpp via FFI. Local engine companion to flutter_mind."
+description: "On-device LLM inference via llama.cpp. Drop LocalEngine into flutter_mind's FlutterMindClient — same API as every other engine."
 version: 0.1.0
 
 topics:

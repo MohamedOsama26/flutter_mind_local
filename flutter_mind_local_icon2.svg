@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <clipPath id="ml2Clip">
+      <rect width="512" height="512" rx="96"></rect>
+    </clipPath>
+    <radialGradient id="ml2Bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#16132a"></stop>
+      <stop offset="100%" stop-color="#0b0a18"></stop>
+    </radialGradient>
+    <radialGradient id="ml2Ambient" cx="50%" cy="50%" r="36%">
+      <stop offset="0%" stop-color="#A85C06" stop-opacity="0.32"></stop>
+      <stop offset="100%" stop-color="#A85C06" stop-opacity="0"></stop>
+    </radialGradient>
+    <filter id="ml2ChipGlow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur"></feGaussianBlur>
+      <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+    </filter>
+    <filter id="ml2NodeGlow" x="-120%" y="-120%" width="340%" height="340%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"></feGaussianBlur>
+      <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+    </filter>
+  </defs>
+
+  <g clip-path="url(#ml2Clip)">
+
+    
+    <rect width="512" height="512" fill="url(#ml2Bg)"></rect>
+    <rect width="512" height="512" fill="url(#ml2Ambient)"></rect>
+
+    
+    <circle cx="256" cy="256" r="158" fill="none" stroke="#7A4408" stroke-opacity="0.45" stroke-width="1.3" stroke-dasharray="5 9"></circle>
+
+    
+    <polygon points="414,256 335,393 177,393 98,256 177,119 335,119" fill="none" stroke="#622E04" stroke-opacity="0.32" stroke-width="1.2"></polygon>
+
+    
+    <g stroke="#CC8418" stroke-opacity="0.85" stroke-width="2" fill="none" stroke-linecap="square" stroke-linejoin="miter">
+      <path d="M 229 190 L 229 119 L 177 119"></path>
+      <path d="M 284 190 L 284 119 L 335 119"></path>
+      <path d="M 322 256 L 414 256"></path>
+      <path d="M 284 322 L 284 393 L 335 393"></path>
+      <path d="M 229 322 L 229 393 L 177 393"></path>
+      <path d="M 190 256 L 98  256"></path>
+    </g>
+
+    
+    <rect x="201" y="201" width="110" height="110" rx="12" fill="#C07010" fill-opacity="0.18" filter="url(#ml2ChipGlow)"></rect>
+
+    
+    <rect x="201" y="201" width="110" height="110" rx="10" fill="#0d0b1e" stroke="#BF7416" stroke-width="2.2" stroke-opacity="0.90"></rect>
+
+    
+    <rect x="221" y="221" width="70" height="70" rx="4" fill="none" stroke="#8A5208" stroke-width="1.2" stroke-opacity="0.55"></rect>
+
+    
+    <g stroke="#8A5208" stroke-opacity="0.30" stroke-width="0.9">
+      <line x1="256" y1="223" x2="256" y2="289"></line>
+      <line x1="223" y1="256" x2="289" y2="256"></line>
+    </g>
+
+    
+    <g fill="#BF7210" fill-opacity="0.62">
+      <rect x="233" y="233" width="4" height="4" rx="0.5"></rect>
+      <rect x="247" y="233" width="4" height="4" rx="0.5"></rect>
+      <rect x="261" y="233" width="4" height="4" rx="0.5"></rect>
+      <rect x="275" y="233" width="4" height="4" rx="0.5"></rect>
+      <rect x="233" y="247" width="4" height="4" rx="0.5"></rect>
+      <rect x="247" y="247" width="4" height="4" rx="0.5"></rect>
+      <rect x="261" y="247" width="4" height="4" rx="0.5"></rect>
+      <rect x="275" y="247" width="4" height="4" rx="0.5"></rect>
+      <rect x="233" y="261" width="4" height="4" rx="0.5"></rect>
+      <rect x="247" y="261" width="4" height="4" rx="0.5"></rect>
+      <rect x="261" y="261" width="4" height="4" rx="0.5"></rect>
+      <rect x="275" y="261" width="4" height="4" rx="0.5"></rect>
+      <rect x="233" y="275" width="4" height="4" rx="0.5"></rect>
+      <rect x="247" y="275" width="4" height="4" rx="0.5"></rect>
+      <rect x="261" y="275" width="4" height="4" rx="0.5"></rect>
+      <rect x="275" y="275" width="4" height="4" rx="0.5"></rect>
+    </g>
+
+    
+    <g fill="#A86810" fill-opacity="0.95">
+      <rect x="226" y="190" width="6" height="11" rx="1.5"></rect>
+      <rect x="253" y="190" width="6" height="11" rx="1.5"></rect>
+      <rect x="281" y="190" width="6" height="11" rx="1.5"></rect>
+    </g>
+    
+    <g fill="#A86810" fill-opacity="0.95">
+      <rect x="226" y="311" width="6" height="11" rx="1.5"></rect>
+      <rect x="253" y="311" width="6" height="11" rx="1.5"></rect>
+      <rect x="281" y="311" width="6" height="11" rx="1.5"></rect>
+    </g>
+    
+    <g fill="#A86810" fill-opacity="0.95">
+      <rect x="190" y="226" width="11" height="6" rx="1.5"></rect>
+      <rect x="190" y="253" width="11" height="6" rx="1.5"></rect>
+      <rect x="190" y="281" width="11" height="6" rx="1.5"></rect>
+    </g>
+    
+    <g fill="#A86810" fill-opacity="0.95">
+      <rect x="311" y="226" width="11" height="6" rx="1.5"></rect>
+      <rect x="311" y="253" width="11" height="6" rx="1.5"></rect>
+      <rect x="311" y="281" width="11" height="6" rx="1.5"></rect>
+    </g>
+
+    
+    <g filter="url(#ml2NodeGlow)">
+      <circle cx="414" cy="256" r="17" fill="#0d0b1e" stroke="#E08C10" stroke-width="3"></circle>
+      <circle cx="335" cy="393" r="17" fill="#0d0b1e" stroke="#E08C10" stroke-width="3"></circle>
+      <circle cx="177" cy="393" r="17" fill="#0d0b1e" stroke="#E08C10" stroke-width="3"></circle>
+      <circle cx="98" cy="256" r="17" fill="#0d0b1e" stroke="#E08C10" stroke-width="3"></circle>
+      <circle cx="177" cy="119" r="17" fill="#0d0b1e" stroke="#E08C10" stroke-width="3"></circle>
+      <circle cx="335" cy="119" r="17" fill="#0d0b1e" stroke="#E08C10" stroke-width="3"></circle>
+    </g>
+    
+    <g fill="#FFB840">
+      <circle cx="414" cy="256" r="5.5"></circle>
+      <circle cx="335" cy="393" r="5.5"></circle>
+      <circle cx="177" cy="393" r="5.5"></circle>
+      <circle cx="98" cy="256" r="5.5"></circle>
+      <circle cx="177" cy="119" r="5.5"></circle>
+      <circle cx="335" cy="119" r="5.5"></circle>
+    </g>
+
+    
+    <circle cx="256" cy="256" r="8" fill="#FFB840" fill-opacity="0.45"></circle>
+    <circle cx="256" cy="256" r="4" fill="#FFD060"></circle>
+
+  </g>
+</svg>
