@@ -1,3 +1,7 @@
+## 0.2.1
+
+* Fixed the README logo not rendering on pub.dev — pinned to a `raw.githubusercontent.com` URL instead of a relative path.
+
 ## 0.2.0
 
 * `LocalEngine` is now a drop-in `AiEngine` for `flutter_mind`'s `FlutterMindClient` — same `send`/`stream`/`countTokens` API as every other engine.

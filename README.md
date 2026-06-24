@@ -1,7 +1,7 @@
 # flutter_mind_local
 
 <p align="center">
-  <img src="flutter_mind_local_icon2.svg" width="120" alt="flutter_mind_local logo" />
+  <img src="https://raw.githubusercontent.com/MohamedOsama26/flutter_mind_local/cff6d73332efe81958c10d0f4a8c1f71cb6d523b/flutter_mind_local_icon2.svg" width="120" alt="flutter_mind_local logo" />
 </p>
 
 On-device LLM inference for Flutter — powered by [llama.cpp](https://github.com/ggerganov/llama.cpp).  
