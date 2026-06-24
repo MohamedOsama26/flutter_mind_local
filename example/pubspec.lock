@@ -98,10 +98,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_mind
-      sha256: "83f277a810a635c335235520598b50b3617c351cfd861cb5dd74e47cc10957fe"
+      sha256: "8234021dc534c9c94c94661a10dae6fb2a9b7024f753c7aab8fffc4ac5b5a1bf"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.1"
+    version: "0.3.0"
   flutter_mind_local:
     dependency: "direct main"
     description:

@@ -73,16 +73,25 @@ class ChatPageState extends State<ChatPage> {
     _controller.clear();
     setState(() {
       _messages.add((text: text, isUser: true));
+      _messages.add((text: '', isUser: false)); // placeholder, filled in as chunks arrive
       _error = null;
     });
     _scrollToBottom();
 
+    final responseIndex = _messages.length - 1;
+    final buffer = StringBuffer();
+
     try {
-      final response = await _engine.send(userMessage: text);
-      setState(() => _messages.add((text: response.text, isUser: false)));
-      _scrollToBottom();
+      await for (final chunk in _engine.stream(userMessage: text)) {
+        buffer.write(chunk);
+        setState(() => _messages[responseIndex] = (text: buffer.toString(), isUser: false));
+        _scrollToBottom();
+      }
     } catch (e) {
-      setState(() => _error = e.toString());
+      setState(() {
+        _messages.removeAt(responseIndex);
+        _error = e.toString();
+      });
     }
   }
 
@@ -108,47 +117,64 @@ class ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: const Text('flutter_mind_local'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2),
           child: StatusBar(status: _status),
         ),
       ),
-      body: Column(
-        children: [
-          if (_error != null)
-            MaterialBanner(
-              content: Text(_error!),
-              backgroundColor: Theme.of(context).colorScheme.errorContainer,
-              actions: [
-                TextButton(
-                  onPressed: () => setState(() => _error = null),
-                  child: const Text('Dismiss'),
-                ),
-              ],
-            ),
-          Expanded(
-            child: _messages.isEmpty
-                ? const Center(
-                    child: Text(
-                      'Send a message to load the model and start chatting.',
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [scheme.primaryContainer, scheme.surface],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              if (_error != null)
+                MaterialBanner(
+                  content: Text(_error!),
+                  backgroundColor: scheme.errorContainer,
+                  actions: [
+                    TextButton(
+                      onPressed: () => setState(() => _error = null),
+                      child: const Text('Dismiss'),
                     ),
-                  )
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _messages.length,
-                    itemBuilder: (context, i) => Bubble(message: _messages[i]),
-                  ),
+                  ],
+                ),
+              Expanded(
+                child: _messages.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'Send a message to load the model and start chatting.',
+                        ),
+                      )
+                    : ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.all(16),
+                        itemCount: _messages.length,
+                        itemBuilder: (context, i) =>
+                            Bubble(message: _messages[i]),
+                      ),
+              ),
+              InputBar(
+                controller: _controller,
+                enabled:
+                    _status != Status.thinking && _status != Status.loading,
+                onSend: _send,
+              ),
+            ],
           ),
-          InputBar(
-            controller: _controller,
-            enabled: _status != Status.thinking && _status != Status.loading,
-            onSend: _send,
-          ),
-        ],
+        ),
       ),
     );
   }
